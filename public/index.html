@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>더제이풀</title>
+<style>
+:root{--card:rgba(255,255,255,.93);--fg:#143a5c;--acc:#1f7bff;--chip:#e8f4ff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--card:rgba(20,32,52,.93);--fg:#eaf4ff;--chip:#24385a;color-scheme:dark}}
+:root[data-theme="dark"]{--card:rgba(20,32,52,.93);--fg:#eaf4ff;--chip:#24385a;color-scheme:dark}
+html,body{height:100%;margin:0;overflow:hidden;background:#a9c8c8;font-family:system-ui,-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;color:var(--fg);-webkit-user-select:none;user-select:none}
+#c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+#c:active{cursor:grabbing}
+.panel{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(92vw,420px);background:var(--card);border-radius:24px;padding:14px 16px;text-align:center;max-height:68vh;overflow-y:auto;box-shadow:0 8px 30px rgba(0,60,120,.25)}
+h1{margin:0 0 2px;font-size:22px}
+p{margin:0 0 10px;font-size:14px;opacity:.8}
+.row{display:flex;align-items:center;gap:8px;margin-bottom:9px;text-align:left}
+.row>span{width:50px;flex:none;font-size:13px;font-weight:700}
+.sws{display:flex;gap:7px;flex-wrap:wrap}
+.sws button{width:26px;height:26px;border-radius:50%;border:3px solid transparent;cursor:pointer;box-shadow:0 1px 5px rgba(0,0,0,.3);padding:0}
+.sws button.on{border-color:var(--fg);transform:scale(1.18)}
+label{display:block;margin-bottom:12px;font-size:15px}
+button{font:inherit;color:inherit}
+#go{width:100%;border:0;border-radius:16px;padding:13px;font-size:18px;font-weight:700;background:var(--acc);color:#fff;cursor:pointer}
+#hud button.top{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));border:0;border-radius:14px;padding:9px 14px;background:var(--card);cursor:pointer;font-weight:600}
+#back{left:12px}
+#rv{left:114px}
+#gt{left:162px}
+#toast{position:fixed;left:50%;bottom:calc(150px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--card);border-radius:14px;padding:8px 14px;font-size:13px;max-width:80vw;text-align:center;opacity:0;transition:opacity .4s;pointer-events:none}
+#gg{display:flex;gap:6px;flex-wrap:wrap}
+#gg button{border:2px solid transparent;border-radius:999px;padding:7px 12px;background:var(--chip);cursor:pointer;font-weight:600;font-size:14px}
+#gg button.on{border-color:var(--acc)}
+#nick{flex:1;min-width:0;border:2px solid var(--chip);border-radius:12px;padding:8px 10px;font:inherit;font-size:14px;background:var(--card);color:var(--fg);user-select:text;-webkit-user-select:text}
+#nick.bad{border-color:#e5384b}
+#who{position:fixed;right:12px;top:calc(92px + env(safe-area-inset-top,0px));width:150px;text-align:left}
+#wBtn{width:100%;border:0;border-radius:12px;padding:6px 10px;background:var(--card);font-weight:700;font-size:13px;cursor:pointer;box-shadow:0 2px 8px rgba(0,60,120,.2)}
+#wList{margin-top:4px;background:var(--card);border-radius:12px;padding:8px 10px;font-size:13px;max-height:180px;overflow-y:auto}
+#wList div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#strokes{position:fixed;left:50%;top:calc(130px + env(safe-area-inset-top,0px));transform:translateX(-50%);display:flex;gap:6px;flex-wrap:wrap;justify-content:center;width:min(94vw,440px)}
+#strokes button{border:0;border-radius:999px;padding:8px 13px;background:var(--card);font-weight:600;font-size:14px;cursor:pointer;box-shadow:0 2px 8px rgba(0,60,120,.2)}
+#strokes button.on{background:var(--acc);color:#fff}
+#status{position:fixed;right:12px;top:calc(12px + env(safe-area-inset-top,0px));width:150px;box-sizing:border-box;background:var(--card);border-radius:14px;padding:8px 10px;text-align:left;box-shadow:0 2px 8px rgba(0,60,120,.2)}
+#stName{font-weight:800;font-size:15px;margin-bottom:6px}
+#gauge{position:relative;height:10px;border-radius:6px;background:rgba(0,0,0,.14);overflow:hidden}
+#gFill{display:block;height:100%;width:0;border-radius:6px;background:#3fd66b}
+#gauge b{position:absolute;top:0;bottom:0;width:2px;background:rgba(255,255,255,.9)}
+#gauge b:nth-of-type(1){left:25%}
+#gauge b:nth-of-type(2){left:50%}
+#gauge b:nth-of-type(3){left:75%}
+#gTxt{display:block;margin-top:4px;font-size:11px;opacity:.85}
+#status.hard #gFill{animation:blink .45s infinite alternate}
+#status.hard #gTxt{color:#e5384b;font-weight:700;opacity:1}
+@keyframes blink{from{opacity:1}to{opacity:.45}}
+#sit{position:fixed;right:20px;bottom:calc(28px + env(safe-area-inset-bottom,0px));width:84px;height:84px;border-radius:50%;border:0;background:var(--acc);color:#fff;font-size:18px;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.3);cursor:pointer}
+#stick{display:none;position:fixed;left:20px;bottom:calc(24px + env(safe-area-inset-bottom,0px));width:120px;height:120px;border-radius:50%;background:var(--card);touch-action:none}
+#stick i{position:absolute;left:35px;top:35px;width:50px;height:50px;border-radius:50%;background:var(--acc);opacity:.85}
+@media (pointer:coarse){#stick{display:block}}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="select" class="panel">
+  <h1>🏊 더제이풀</h1>
+  <div class="row"><span>닉네임</span><input id="nick" maxlength="10" placeholder="입장할 때마다 정해요 (10자 이내)" autocomplete="off"></div>
+  <div class="row"><span>수영복</span><div id="sw" class="sws"></div></div>
+  <div class="row"><span>수모</span><div id="capc" class="sws"></div></div>
+  <div class="row"><span>수경</span><div id="gg"></div></div>
+  <div class="row"><span>렌즈</span><div id="lensc" class="sws"></div></div>
+  <div class="row"><span>프레임</span><div id="framec" class="sws"></div></div>
+  <label><input type="checkbox" id="cap" checked> 수영모 쓰기</label>
+  <button id="go">입장하기 🌊</button>
+</div>
+<div id="hud" hidden>
+  <button id="back" class="top">👙 탈의실</button>
+  <button id="rv" class="top" title="시점 초기화" aria-label="시점 초기화">🎥</button>
+  <button id="gt" class="top" title="수경 벗기/쓰기" aria-label="수경 벗기/쓰기">🥽</button>
+  <div id="status"><div id="stName">쉬는중</div><div id="gauge"><i id="gFill"></i><b></b><b></b><b></b></div><small id="gTxt">호흡 0%</small></div>
+  <div id="who" hidden><button id="wBtn">👥 접속 중 1명</button><div id="wList" hidden></div></div>
+  <div id="strokes" hidden></div>
+  <div id="toast"></div>
+  <div id="stick"><i></i></div>
+  <button id="sit">앉기</button>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const L=(a,b,k)=>a+(b-a)*k;
+const turn=(c,t,k)=>c+Math.atan2(Math.sin(t-c),Math.cos(t-c))*k;
+// 수영장: 레인 5개. 이전보다 길이 1.3배(32.5), 폭 1.1배(13.75)
+const PX=6.875,PZ=16.25;
+const SIDE=5.425;                               // 물 밖 좌우 폭 (이전 7.75의 70%)
+const DX=PX+SIDE,DZ=PZ+7.5,DECK=0.4,TOP=7.4;
+const LW=PX*2/5;                                // 레인 폭 2.75
+const ROPES=[-1.5*LW,-.5*LW,.5*LW,1.5*LW];      // 레인 사이 줄 4개
+const CZ=PZ/3;                                  // 3번 레인 기둥: 수영장 길이를 3등분하는 위치
+const COLS=[[0,-CZ],[0,CZ]];
+const SD=.9;                                    // 계단 한 단 깊이 (왼쪽 1·2번 레인)
+const TW=PX/6;                                  // 물 밖 타일 한 장의 폭 (수영장 가장자리에서 딱 맞게 시작)
+const SPAWN=PZ+4.5;                             // 입장 위치
+
+const R=new THREE.WebGLRenderer({canvas:$('c'),antialias:true});
+R.setPixelRatio(Math.min(devicePixelRatio,2));
+const S=new THREE.Scene();
+S.background=new THREE.Color(0xa9c8c8);
+S.fog=new THREE.Fog(0xa9c8c8,55,130);
+const cam=new THREE.PerspectiveCamera(50,1,.1,250);
+function size(){R.setSize(innerWidth,innerHeight,false);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix()}
+addEventListener('resize',size);size();
+
+/* ---------- 텍스처 ---------- */
+function cv(w,h){const c=document.createElement('canvas');c.width=w;c.height=h;return c}
+function tiles(g,w,h,s,base,gr){
+  for(let y=0;y<h;y+=s)for(let x=0;x<w;x+=s){
+    g.fillStyle=base;g.fillRect(x,y,s,s);
+    g.fillStyle='rgba(255,255,255,'+(Math.random()*.1)+')';g.fillRect(x,y,s,s);
+    g.fillStyle=gr;g.fillRect(x,y,s,1.5);g.fillRect(x,y,1.5,s);
+  }
+}
+function tex(c,rx,ry){const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(rx,ry);return t}
+
+// 수영장 바닥: 청록빛 정사각형 타일 + 레인(5개)마다 짙은 파랑 T자 라인
+const FW=Math.round(PX*80),FH=Math.round(PZ*80);
+const fc=cv(FW,FH),fg=fc.getContext('2d');
+tiles(fg,FW,FH,20,'#35a8b5','#8fd6df');
+fg.fillStyle='#1a3a8f';
+for(let i=0;i<5;i++){const x=FW/5*(i+.5);fg.fillRect(x-5,52,10,FH-104);fg.fillRect(x-32,52,64,12);fg.fillRect(x-32,FH-64,64,12)}
+const floorT=tex(fc,1,1);
+// 수영장 안쪽 벽 타일
+const wc=cv(64,64);tiles(wc.getContext('2d'),64,64,64,'#3aa6b3','#8fd6df');
+const wl=tex(wc,PZ*4,3.6),ws=tex(wc,PX*4,3.6);
+const bm=t=>new THREE.MeshLambertMaterial({map:t,side:THREE.BackSide});
+const pool=new THREE.Mesh(new THREE.BoxGeometry(PX*2,1.8,PZ*2),[bm(wl),bm(wl),bm(wl),bm(floorT),bm(ws),bm(ws)]);
+pool.position.y=-0.5;S.add(pool);
+
+// 물 밖 바닥(데크): 큼직한 따뜻한 회색 석재 타일 (수영장 가장자리에서 타일 경계가 시작됨)
+const dc=cv(256,256),dg=dc.getContext('2d');
+for(let r=0;r<4;r++)for(let c=0;c<2;c++){const v=Math.floor(Math.random()*18)-9;dg.fillStyle='rgb('+(157+v)+','+(139+v)+','+(131+v)+')';dg.fillRect(c*128,r*64,128,64)}
+dg.fillStyle='#7d6e67';for(let r=0;r<4;r++)dg.fillRect(0,r*64,256,2);for(let c=0;c<2;c++)dg.fillRect(c*128,0,2,256);
+const sh=new THREE.Shape();sh.moveTo(-DX,-DZ);sh.lineTo(DX,-DZ);sh.lineTo(DX,DZ);sh.lineTo(-DX,DZ);sh.closePath();
+const hole=new THREE.Path();hole.moveTo(-PX,-PZ);hole.lineTo(-PX,PZ);hole.lineTo(PX,PZ);hole.lineTo(PX,-PZ);hole.closePath();sh.holes.push(hole);
+const deck=new THREE.Mesh(new THREE.ShapeGeometry(sh),new THREE.MeshLambertMaterial({map:tex(dc,1/(2*TW),1/(2*TW))}));
+deck.rotation.x=-Math.PI/2;deck.position.y=DECK;S.add(deck);
+const skirt=new THREE.Mesh(new THREE.PlaneGeometry(DX*2,1.6),new THREE.MeshLambertMaterial({color:0x7d6e67}));
+skirt.position.set(0,-.4,DZ);S.add(skirt);
+// 배수구: 수영장 옆 첫 번째 타일 바로 옆
+const grateM=new THREE.MeshLambertMaterial({color:0x2d2f31});
+[-1,1].forEach(s=>{const g=new THREE.Mesh(new THREE.BoxGeometry(.3,.02,PZ*2),grateM);g.position.set(s*(PX+TW+.15),DECK+.011,0);S.add(g)});
+
+/* ---------- 벽: 회색 벽 + 밝은 회색 벽기둥 + 오른쪽 벽 로고 ---------- */
+const wallM=new THREE.MeshLambertMaterial({color:0x9d8f86,side:THREE.DoubleSide});
+[[0,-DZ,0,DX*2],[-DX,0,Math.PI/2,DZ*2],[DX,0,-Math.PI/2,DZ*2]].forEach(([x,z,ry,w])=>{
+  const a=new THREE.Mesh(new THREE.PlaneGeometry(w,7),wallM);a.position.set(x,3.9,z);a.rotation.y=ry;S.add(a);
+});
+const pilM=new THREE.MeshLambertMaterial({color:0xb0a59d});
+const pil=(x,z,w,d)=>{const p=new THREE.Mesh(new THREE.BoxGeometry(w,7,d),pilM);p.position.set(x,3.9,z);S.add(p)};
+[-14.25,-6.5,6.5,14.25].forEach(z=>{pil(-DX+.35,z,.7,1.4);pil(DX-.35,z,.7,1.4)});
+[-8.5,-3.5,3.5,8.5].forEach(x=>pil(x,-DZ+.35,1.4,.7));
+
+// 로고: The JPool (사진 속 로고 모양·색을 본떠 캔버스로 그림)
+const lg=cv(1024,512),g=lg.getContext('2d');
+g.scale(1.412,1.412);g.lineCap='round';g.lineJoin='round';
+const grad=(y0,y1,a,b)=>{const q=g.createLinearGradient(0,y0,0,y1);q.addColorStop(0,a);q.addColorStop(1,b);return q};
+g.font='italic 900 98px Arial,"Helvetica Neue",sans-serif';g.textBaseline='alphabetic';
+g.lineWidth=16;g.strokeStyle='#2a74d6';g.strokeText('The',62,142);
+g.fillStyle=grad(60,150,'#ffffff','#c9d3dc');g.fillText('The',62,142);
+g.lineWidth=34;g.strokeStyle=grad(110,300,'#3fdc6b','#1f6fe0');                    // J
+g.beginPath();g.moveTo(398,128);g.lineTo(398,236);g.quadraticCurveTo(398,290,350,290);g.quadraticCurveTo(312,290,306,262);g.stroke();
+g.lineWidth=6;g.strokeStyle='#17356f';                                              // J 아래 파도
+for(let r=0;r<2;r++){g.beginPath();for(let x=322;x<=408;x+=4){const y=300+r*11+Math.sin((x-322)/7)*3;x===322?g.moveTo(x,y):g.lineTo(x,y)}g.stroke()}
+g.lineWidth=30;g.strokeStyle=grad(110,260,'#3fdc6b','#18b6a0');                    // P
+g.beginPath();g.moveTo(452,128);g.lineTo(452,250);g.stroke();
+g.beginPath();g.moveTo(452,128);g.lineTo(478,128);g.arc(478,160,32,-Math.PI/2,Math.PI/2);g.lineTo(452,192);g.stroke();
+g.lineWidth=24;g.strokeStyle='#1f86df';g.beginPath();g.arc(546,232,26,0,Math.PI*2);g.stroke();   // o
+g.strokeStyle='#1d5fd0';g.beginPath();g.arc(602,224,26,0,Math.PI*2);g.stroke();                  // o
+g.fillStyle='#10306b';g.beginPath();g.ellipse(612,198,12,6,-.5,0,Math.PI*2);g.fill();            // 돌고래 포인트
+g.fillStyle='#fff';g.beginPath();g.arc(616,196,2,0,Math.PI*2);g.fill();
+g.lineWidth=22;g.strokeStyle=grad(110,260,'#3fdc6b','#1f6fe0');                    // l
+g.beginPath();g.moveTo(656,128);g.lineTo(656,252);g.stroke();
+g.font='bold 15px Arial,sans-serif';g.fillStyle='#ffffff';g.textAlign='left';g.fillText('The Highest-class Swimming Pool',430,296);
+const sign=new THREE.Mesh(new THREE.PlaneGeometry(7,3.5),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(lg),transparent:true}));
+sign.position.set(DX-.06,3.7,0);sign.rotation.y=-Math.PI/2;S.add(sign);   // 오른쪽 벽 중간
+
+/* ---------- 3번 레인 회색 기둥 2개 (수영장 길이를 3등분하는 위치) ---------- */
+const colM=new THREE.MeshLambertMaterial({color:0x56535a}),collarM=new THREE.MeshLambertMaterial({color:0xcfd2d0});
+COLS.forEach(([x,z])=>{
+  const c=new THREE.Mesh(new THREE.BoxGeometry(1.2,TOP+1.4,1.2),colM);c.position.set(x,(TOP-1.4)/2,z);S.add(c);
+  const k=new THREE.Mesh(new THREE.BoxGeometry(1.9,.35,1.9),collarM);k.position.set(x,TOP-.18,z);S.add(k);
+});
+
+/* ---------- 천장: 청록빛 회색 + 파란 LED 띠 ---------- */
+const cc=cv(256,256),cg=cc.getContext('2d');
+cg.fillStyle='#86b5b6';cg.fillRect(0,0,256,256);
+cg.fillStyle='rgba(0,0,0,.04)';for(let i=0;i<300;i++)cg.fillRect(Math.random()*256,Math.random()*256,2,2);
+cg.fillStyle='#79a7a8';cg.fillRect(0,0,256,2);cg.fillRect(0,0,2,256);
+const ceil=new THREE.Mesh(new THREE.PlaneGeometry(DX*2,DZ*2),new THREE.MeshLambertMaterial({map:tex(cc,DX*2/2.4,DZ*2/2.4)}));
+ceil.rotation.x=Math.PI/2;ceil.position.y=TOP;S.add(ceil);   // 아래쪽만 보이는 면 (위에서 내려다보면 투명)
+const ledM=new THREE.MeshBasicMaterial({color:0x3d7fe6});
+[-8.5,8.5].forEach(x=>{const l=new THREE.Mesh(new THREE.BoxGeometry(.3,.05,DZ*2-1),ledM);l.position.set(x,TOP-.03,0);S.add(l)});
+
+/* ---------- 입수 계단: 왼쪽 1·2번 레인 + 스테인리스 손잡이 ---------- */
+const stM=new THREE.MeshLambertMaterial({color:0xa2c4bd}),steel=new THREE.MeshLambertMaterial({color:0xcfd6dc});
+const stW=ROPES[1]-(-PX),stX=(-PX+ROPES[1])/2;     // 1·2번 레인 폭과 중심
+for(let k=0;k<3;k++){
+  const top=-.1-.35*k,zc=PZ-SD*k-SD/2;
+  const b=new THREE.Mesh(new THREE.BoxGeometry(stW,top+1.4,SD),stM);b.position.set(stX,(top-1.4)/2,zc);S.add(b);
+}
+[-PX+.35,ROPES[1]-.35].forEach(x=>{
+  const bar=new THREE.Mesh(new THREE.CylinderGeometry(.035,.035,2.6,8).rotateX(Math.PI/2),steel);bar.position.set(x,1.3,PZ-1);S.add(bar);
+  [[PZ+.3,.4],[PZ-.5,-.1],[PZ-1.35,-.45],[PZ-2.2,-.8]].forEach(([z,y0])=>{
+    const p=new THREE.Mesh(new THREE.CylinderGeometry(.035,.035,1.3-y0,8),steel);p.position.set(x,(y0+1.3)/2,z);S.add(p);
+  });
+});
+
+/* ---------- 물 ---------- */
+const wg=new THREE.PlaneGeometry(PX*2,PZ*2,28,65),wp=wg.attributes.position;
+const water=new THREE.Mesh(wg,new THREE.MeshLambertMaterial({color:0x3ab4c2,transparent:true,opacity:.28}));
+water.rotation.x=-Math.PI/2;S.add(water);
+
+/* ---------- 레인 줄: 흰색 + 진한 파랑 ---------- */
+const N=Math.round(PZ*4),cols=[0xffffff,0xffffff,0xffffff,0x2038b4,0x2038b4];
+const ropes=new THREE.InstancedMesh(new THREE.CylinderGeometry(.1,.1,.46,8).rotateX(Math.PI/2),new THREE.MeshLambertMaterial(),N*ROPES.length);
+const m4=new THREE.Matrix4();
+for(let r=0;r<ROPES.length;r++)for(let i=0;i<N;i++){
+  m4.setPosition(ROPES[r],.06,-PZ+.25+i*.5);
+  ropes.setMatrixAt(r*N+i,m4);ropes.setColorAt(r*N+i,new THREE.Color(cols[i%5]));
+}
+ropes.frustumCulled=false;S.add(ropes);
+
+/* ---------- 조명: 천장 매입등(다운라이트) ---------- */
+S.add(new THREE.HemisphereLight(0xffffff,0xb9d3e0,.9));
+const sun=new THREE.DirectionalLight(0xffffff,.3);sun.position.set(5,10,8);S.add(sun);
+[[-6,-16],[6,-16],[-6,0],[6,0],[-6,16],[6,16]].forEach(([x,z])=>{
+  const l=new THREE.PointLight(0xfff3d6,.45,26);l.position.set(x,TOP-1.1,z);S.add(l);
+});
+const LX=[-10,-5,0,5,10],LZ=[];for(let z=-DZ+3;z<DZ-2;z+=5)LZ.push(z);
+const dl=new THREE.InstancedMesh(new THREE.CircleGeometry(.24,20).rotateX(Math.PI/2),new THREE.MeshBasicMaterial({color:0xffffff}),LX.length*LZ.length);
+const halo=new THREE.InstancedMesh(new THREE.CircleGeometry(.5,20).rotateX(Math.PI/2),new THREE.MeshBasicMaterial({color:0xfff6d8,transparent:true,opacity:.25,depthWrite:false}),LX.length*LZ.length);
+let di=0;
+LX.forEach(x=>LZ.forEach(z=>{
+  m4.setPosition(x,TOP-.02,z);dl.setMatrixAt(di,m4);
+  m4.setPosition(x,TOP-.015,z);halo.setMatrixAt(di,m4);di++;
+}));
+dl.frustumCulled=false;halo.frustumCulled=false;S.add(dl,halo);
+
+/* ---------- 캐릭터: 나와 다른 접속자가 똑같은 모델을 씀 (buildChar) ---------- */
+const mixHex=(a,b,k)=>{let r=0;for(const s of [16,8,0])r=r*256+Math.round(((a>>s)&255)*(1-k)+((b>>s)&255)*k);return r};   // 두 색을 k(0~1)만큼 섞기
+const add=(p,g,m,x=0,y=0,z=0)=>{const o=new THREE.Mesh(g,m);o.position.set(x,y,z);p.add(o);return o};
+
+/* 수경 2종: 실제 레이싱 수경처럼 눈 컵 + 곡면 거울렌즈 + 패킹 + 코 연결대 + 머리끈 */
+function makeGoggles(pitch,o){
+  const g=new THREE.Group();pitch.add(g);
+  const fm=new THREE.MeshLambertMaterial({color:0x14171c});                                   // 프레임(컵 몸체)
+  const lm=new THREE.MeshLambertMaterial({color:0x79b8ff,emissive:0x79b8ff,emissiveIntensity:.25,transparent:true,opacity:.88});   // 거울 렌즈
+  const gm=new THREE.MeshLambertMaterial({color:o.gasket});                                   // 얼굴에 닿는 실리콘 패킹
+  const sm=new THREE.MeshLambertMaterial({color:0x101216});                                   // 머리끈
+  const phi=.42,R=.535,cx=R*Math.sin(phi);                                                    // 눈 위치(좌우 각도), 컵 중심 반지름
+  [-1,1].forEach(s=>{
+    const cup=new THREE.Group();cup.position.set(s*cx,.98,R*Math.cos(phi));cup.rotation.y=s*phi;g.add(cup);   // 얼굴 곡면을 따라 바깥쪽으로 기울임
+    const body=add(cup,new THREE.CylinderGeometry(1,1,.1,28).rotateX(Math.PI/2),fm,0,0,.01);body.scale.set(o.w,o.h,1);     // 컵 몸체(타원)
+    const gas=add(cup,new THREE.TorusGeometry(1,.1,8,28),gm,0,0,-.055);gas.scale.set(o.w*.96,o.h*.96,.7);                  // 패킹
+    const lens=add(cup,new THREE.SphereGeometry(1,24,12),lm,0,0,.055);lens.scale.set(o.w*.9,o.h*.88,.05);                  // 볼록한 렌즈
+    const rim=add(cup,new THREE.TorusGeometry(1,.07,8,28),fm,0,0,.05);rim.scale.set(o.w*.97,o.h*.97,.8);                   // 렌즈 테두리
+    add(cup,new THREE.BoxGeometry(.06,.05,.04),fm,s*(o.w+.025),0,0);                                                       // 머리끈 연결 고리
+    if(o.ridge){const rg=add(cup,new THREE.TorusGeometry(1,.05,6,20,Math.PI),fm,0,0,.06);rg.scale.set(o.w*1.02,o.h*1.02,1)}   // 윗부분 눈썹 라인
+  });
+  add(g,new THREE.BoxGeometry(2*(cx-o.w*Math.cos(phi))+.06,.03,.04),fm,0,.99,.54);                                          // 코 연결대
+  const pts=[];for(let i=0;i<=24;i++){const a=.84+(2*Math.PI-1.68)*i/24;pts.push(new THREE.Vector3(.56*Math.sin(a),0,.56*Math.cos(a)))}
+  const strap=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),48,.02,6),sm);strap.position.y=.98;strap.scale.y=2.2;g.add(strap);   // 머리 뒤로 도는 끈
+  add(g,new THREE.BoxGeometry(.14,.09,.035),fm,0,.98,-.575);                                                                // 뒤통수 조절 버클
+  return {g,fm,lm};
+}
+// 해녀수경: 두 눈을 하나로 덮는 커다란 외눈 렌즈 + 굵은 테두리 + 코를 감싸는 코주머니
+function makeHaenyeo(pitch){
+  const g=new THREE.Group();pitch.add(g);
+  const fm=new THREE.MeshLambertMaterial({color:0x14171c,side:THREE.DoubleSide});
+  const lm=new THREE.MeshLambertMaterial({color:0xcfeeff,emissive:0xcfeeff,emissiveIntensity:.2,transparent:true,opacity:.7,side:THREE.DoubleSide});
+  const sm=new THREE.MeshLambertMaterial({color:0x101216});
+  const C=Math.PI/2;
+  // 얼굴 곡면을 따라 휘어진 띠 조각: 가로 각도 p0~p1, 세로 각도 t0~t1 (위쪽이 음수)
+  const band=(r,p0,p1,t0,t1,m)=>{const o=new THREE.Mesh(new THREE.SphereGeometry(r,20,8,C+p0,p1-p0,C+t0,t1-t0),m);o.position.y=1;g.add(o);return o};
+  band(.575,-.73,.73,-.27,.27,lm);                                    // 하나로 이어진 큰 렌즈
+  band(.58,-.86,.86,-.34,-.26,fm);band(.58,-.86,.86,.26,.34,fm);      // 위·아래 테두리
+  band(.58,-.86,-.72,-.34,.34,fm);band(.58,.72,.86,-.34,.34,fm);      // 좌·우 테두리
+  const nose=add(g,new THREE.SphereGeometry(1,14,10),fm,0,.84,.55);nose.scale.set(.13,.075,.08);   // 코주머니
+  const pts=[];for(let i=0;i<=24;i++){const a=.84+(2*Math.PI-1.68)*i/24;pts.push(new THREE.Vector3(.57*Math.sin(a),0,.57*Math.cos(a)))}
+  const strap=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),48,.025,6),sm);strap.position.y=.98;strap.scale.y=2.2;g.add(strap);
+  add(g,new THREE.BoxGeometry(.14,.09,.035),fm,0,.98,-.585);
+  return {g,fm,lm};
+}
+// 이름표 (닉네임이 머리 위에 떠 있음)
+function nameTag(text){
+  const c=cv(384,96),x=c.getContext('2d'),W=384;
+  x.font='800 44px "Apple SD Gothic Neo","Noto Sans KR",sans-serif';x.textAlign='center';x.textBaseline='middle';
+  const w=Math.min(372,x.measureText(text).width+56),r=36;
+  x.fillStyle='rgba(20,58,92,.8)';x.beginPath();
+  x.moveTo(W/2-w/2+r,12);x.lineTo(W/2+w/2-r,12);x.arc(W/2+w/2-r,48,r,-Math.PI/2,Math.PI/2);
+  x.lineTo(W/2-w/2+r,84);x.arc(W/2-w/2+r,48,r,Math.PI/2,Math.PI*1.5);x.closePath();x.fill();
+  x.fillStyle='#ffffff';x.fillText(text,W/2,51,w-30);
+  const s=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),transparent:true,depthTest:false}));
+  s.scale.set(2.4,.6,1);s.renderOrder=5;return s;
+}
+function setTag(c,text){
+  if(c.tagText===text)return;
+  if(c.tag){c.hero.remove(c.tag);c.tag.material.map.dispose();c.tag.material.dispose()}
+  c.tag=nameTag(text);c.tag.position.y=2.65;c.hero.add(c.tag);c.tagText=text;
+}
+function buildChar(){
+  const cheeks=[],faceM=new THREE.MeshLambertMaterial({color:0xffd6b3});   // 얼굴 전용 재질: 호흡이 차오르면 빨개짐
+  const skin=new THREE.MeshLambertMaterial({color:0xffd6b3}),suit=new THREE.MeshLambertMaterial({color:0xff6b81}),
+    capM=new THREE.MeshLambertMaterial({color:0xff6b81}),hairM=new THREE.MeshLambertMaterial({color:0x5a3a2a}),
+    dark=new THREE.MeshBasicMaterial({color:0x222222}),blush=new THREE.MeshBasicMaterial({color:0xff9aa8});
+  const hero=new THREE.Group(),pitch=new THREE.Group();pitch.position.y=.7;hero.add(pitch);
+  add(pitch,new THREE.CylinderGeometry(.36,.4,.55,16),suit,0,.35,0);
+  add(pitch,new THREE.CylinderGeometry(.4,.4,.3,16),suit,0,.02,0);
+  add(pitch,new THREE.SphereGeometry(.5,24,18),faceM,0,1,0);
+  add(pitch,new THREE.SphereGeometry(.52,24,12,0,Math.PI*2,0,Math.PI*.55),hairM,0,1.02,0);
+  const cap=add(pitch,new THREE.SphereGeometry(.55,24,12,0,Math.PI*2,0,Math.PI*.5),capM,0,1.03,0);
+  [-1,1].forEach(s=>{
+    add(pitch,new THREE.SphereGeometry(.06,10,8),dark,s*.17,.98,.46);
+    const c=add(pitch,new THREE.SphereGeometry(.07,10,8),blush,s*.3,.88,.4);c.scale.z=.4;cheeks.push(c);
+  });
+  const arms=[],legs=[];
+  [-1,1].forEach(s=>{
+    const a=new THREE.Group();a.position.set(s*.5,.55,0);
+    add(a,new THREE.CylinderGeometry(.11,.11,.5,10),skin,0,-.25,0);add(a,new THREE.SphereGeometry(.13,10,8),skin,0,-.5,0);
+    pitch.add(a);arms.push(a);
+    const l=new THREE.Group();l.position.set(s*.18,0,0);
+    add(l,new THREE.CylinderGeometry(.13,.12,.55,10),skin,0,-.275,0);add(l,new THREE.SphereGeometry(.15,10,8),skin,0,-.55,.05);
+    pitch.add(l);legs.push(l);
+  });
+  // 숨이 찰 때만 나타나는 것들: 벌린 입, 땀방울, "헥헥!" 말풍선
+  const mouth=add(pitch,new THREE.SphereGeometry(1,12,8),new THREE.MeshBasicMaterial({color:0x7a1f2b}),0,.76,.45);mouth.visible=false;
+  const sweat=[-1,1].map(s=>{const d=add(pitch,new THREE.SphereGeometry(.05,8,6),new THREE.MeshBasicMaterial({color:0x6fd0ff}),s*.42,1.2,.25);d.scale.y=1.4;d.visible=false;return d});
+  const huff=new THREE.Sprite(new THREE.SpriteMaterial({map:huffTex,transparent:true,depthTest:false}));
+  huff.scale.set(1.5,.75,1);huff.position.set(0,3.4,0);huff.visible=false;hero.add(huff);
+  const gogs={
+    cobra:makeGoggles(pitch,{w:.2,h:.125,gasket:0x111214,ridge:true}),   // 아레나 코브라: 큼직한 타원 렌즈 + 윗부분 눈썹 라인
+    hyper:makeGoggles(pitch,{w:.16,h:.1,gasket:0x555a63}),               // 스피도 하이퍼 엘리트: 작고 낮은 컴팩트 렌즈
+    haenyeo:makeHaenyeo(pitch)                                            // 해녀수경: 외눈 큰 렌즈
+  };
+  return {hero,pitch,arms,legs,suit,capM,cap,faceM,blush,cheeks,mouth,sweat,huff,gogs,ph:0,flip:0,wd:0,face:0,tag:null,tagText:''};
+}
+const huffTex=(()=>{
+  const hc=cv(256,128),hx=hc.getContext('2d');
+  hx.font='900 70px "Apple SD Gothic Neo","Noto Sans KR",sans-serif';hx.textAlign='center';hx.textBaseline='middle';hx.lineWidth=12;hx.lineJoin='round';
+  hx.strokeStyle='#ffffff';hx.strokeText('헥헥!',128,64);hx.fillStyle='#e5384b';hx.fillText('헥헥!',128,64);
+  return new THREE.CanvasTexture(hc);
+})();
+// 캐릭터 한 명의 자세를 상태(s)에 맞춰 부드럽게 움직임: 나도, 다른 접속자도 같은 함수를 씀
+// s = {sit:'rope'|'edge'|'step'|0, sw:물속 수영 여부, stroke, mv:움직임(0~1), winded, breath(0~1), facing}
+function animChar(c,s,dt){
+  const {pitch,arms,legs}=c,sd=STROKES[s.stroke]||STROKES.free,sit=s.sit,sw=s.sw,stroke=s.stroke,winded=s.winded,mv=s.mv;
+  c.wd=L(c.wd,winded?1:0,Math.min(1,dt*4));
+  c.flip=turn(c.flip,(sw&&stroke==='back')?Math.PI:0,Math.min(1,dt*10));   // 배영은 하늘을 보고 누워서 헤엄
+  c.hero.rotation.y=s.facing+c.flip;
+  const s7=Math.sin(t*10);let P,AL,AR,LL,LR,LZ=0,AZ=.12,roll=0,bob=0;
+  if(sw&&stroke!=='walk')c.ph+=dt*sd.rate*(mv>.05?1:.35);
+  const ph=c.ph,PI=Math.PI;
+  if(sit==='rope'){P=0;AL=AR=0;LL=LR=0;LZ=.55}
+  else if(sit==='edge'||sit==='step'){P=0;AL=AR=-.25;LL=LR=-.7}
+  else if(sw){
+    if(stroke==='walk'){                         // 걷기(기본): 바닥에 두 발로 서서 물속을 걸어요. 멈추면 그냥 서 있어요
+      const m=mv>.05?1:0,w7=Math.sin(t*7);P=winded?.4:0;AL=winded?-.7:w7*.5*m;AR=winded?-.7:-w7*.5*m;LL=winded?-.4:-AL*.8;LR=winded?-.4:-AR*.8;AZ=.25;
+    }else if(stroke==='free'){                        // 자유형: 팔을 번갈아 크게 돌리고 발은 잔잔하게 차요
+      P=1.25;AL=ph;AR=ph+PI;LL=Math.sin(ph*3)*.35;LR=-LL;roll=Math.sin(ph)*.3;
+    }else if(stroke==='back'){                   // 배영: 누워서 팔을 뒤로 번갈아 돌려요
+      P=-1.25;AL=-ph;AR=-ph-PI;LL=Math.sin(ph*3)*.35;LR=-LL;roll=Math.sin(ph)*.25;
+    }else if(stroke==='breast'){                 // 평영: 두 팔을 동시에 벌렸다 모으고, 개구리처럼 차요
+      const a=.5+.5*Math.sin(ph),kk=.5+.5*Math.sin(ph-1.7);
+      P=1.25-.3*a;AL=AR=PI-a;AZ=.15+.6*a;LL=LR=.15+.7*kk;LZ=.12+.5*kk;bob=Math.sin(ph-.6)*.08;
+    }else if(stroke==='fly'){                    // 접영: 두 팔을 함께 돌리고 몸을 파도처럼 굽혀요
+      P=1.25+Math.sin(ph*2)*.3;AL=AR=ph;AZ=.4;LL=LR=Math.sin(ph*2+.6)*.5;bob=Math.sin(ph*2+1)*.1;
+    }else{                                       // 잠영: 물속 깊이 팔을 쭉 펴고 돌핀킥
+      P=1.5708+Math.sin(ph*1.6)*.12;AL=AR=PI;AZ=.05;LL=LR=Math.sin(ph*1.6+.4)*.5;
+    }
+  }
+  else if(winded){const m=mv>.05?1:0;P=.45;AL=AR=-.75;LL=-.45+s7*.45*m;LR=-.45-s7*.45*m}   // 숨찰 땐 허리를 숙이고 무릎에 손
+  else{P=0;const m=mv>.05?1:0;AL=s7*.7*m;AR=-s7*.7*m;LL=-AL*.8;LR=-AR*.8}
+  const k=Math.min(1,dt*12),wd=c.wd,breath=s.breath;
+  pitch.rotation.x=L(pitch.rotation.x,P,k);
+  pitch.rotation.y=L(pitch.rotation.y,roll,k);
+  const hv=Math.sin(t*13)*wd;                                          // 헥헥 숨쉬는 들썩임
+  pitch.position.y=L(pitch.position.y,(sit?0.55:sw&&stroke!=='walk'?0.55+Math.sin(t*3)*.04+bob:0.7+(sw&&mv>.05?Math.sin(t*14)*.025:0))+hv*.03,Math.min(1,dt*10));
+  const bs=1+hv*.04;pitch.scale.set(bs,bs,bs);
+  c.mouth.visible=wd>.1;c.mouth.scale.set(.08,.03+.05*Math.abs(hv),.02);   // 입 벌리기
+  c.faceM.color.setHex(mixHex(0xffd6b3,0xff5648,breath));c.blush.color.setHex(mixHex(0xff9aa8,0xe01f3d,breath));   // 호흡이 찰수록 얼굴·볼이 비례해서 빨개짐
+  c.cheeks.forEach(q=>q.scale.set(1+breath*.8,1+breath*.8,.4));
+  c.sweat.forEach((d,i)=>{d.visible=wd>.5;d.position.y=1.3-((t*1.1+i*.5)%1)*.45});
+  c.huff.visible=wd>.3;c.huff.material.opacity=Math.min(1,wd);c.huff.position.y=3.3+Math.abs(Math.sin(t*6))*.2;
+  arms[0].rotation.x=turn(arms[0].rotation.x,AL,k);arms[1].rotation.x=turn(arms[1].rotation.x,AR,k);
+  arms[0].rotation.z=L(arms[0].rotation.z,-AZ,k);arms[1].rotation.z=L(arms[1].rotation.z,AZ,k);
+  legs[0].rotation.x=turn(legs[0].rotation.x,LL,k);legs[1].rotation.x=turn(legs[1].rotation.x,LR,k);
+  legs[0].rotation.z=L(legs[0].rotation.z,-LZ,k);legs[1].rotation.z=L(legs[1].rotation.z,LZ,k);
+}
+const H=buildChar();
+const {hero,pitch,arms,legs,suit,capM,cap,faceM,blush,cheeks,mouth,sweat,huff,gogs}=H;
+hero.position.set(0,DECK,SPAWN);S.add(hero);
+
+/* ---------- NPC: 곰 같은 덩치 + 곱슬머리 + 검정 수트를 반쯤 입은 아저씨 (3번 레인 안, 계단 옆) ---------- */
+const NPC_X=0,NPC_Z=PZ-2.2,NPC_R=1.15;     // 3번 레인 안, 계단 옆에 허리까지 물에 잠겨 서 있음
+const npc=new THREE.Group(),nb=new THREE.Group();npc.add(nb);
+{
+  const suitK=new THREE.MeshLambertMaterial({color:0x15161a}),skinN=new THREE.MeshLambertMaterial({color:0xe9b690}),
+    hairN=new THREE.MeshLambertMaterial({color:0x2b1d14}),eyeN=new THREE.MeshBasicMaterial({color:0x111111}),noseN=new THREE.MeshLambertMaterial({color:0xd9987a});
+  [-1,1].forEach(s=>{
+    add(npc,new THREE.CylinderGeometry(.3,.27,.95,14),suitK,s*.3,.48,0);                       // 다리: 수트를 입은 아랫도리
+    add(nb,new THREE.CylinderGeometry(.19,.17,.75,10),suitK,s*.78,.62,-.02).rotation.z=s*.1;   // 허리 아래로 늘어뜨린 빈 소매
+    add(nb,new THREE.SphereGeometry(.3,12,10),skinN,s*.82,2.0,0);                              // 어깨
+    add(nb,new THREE.CylinderGeometry(.2,.17,.8,12),skinN,s*.86,1.6,0);                        // 굵은 팔
+    add(nb,new THREE.SphereGeometry(.2,10,8),skinN,s*.88,1.15,.02);                            // 주먹
+    add(nb,new THREE.SphereGeometry(.09,10,8),skinN,s*.5,2.55,0).position.x=s*.5;              // 귀
+    add(nb,new THREE.SphereGeometry(.035,10,8),eyeN,s*.17,2.63,.47);                           // 눈: 단추만 하게 작게
+  });
+  add(nb,new THREE.CylinderGeometry(.74,.7,.35,20),suitK,0,1.05,0);                           // 허리까지 올려 입은 수트
+  add(nb,new THREE.CylinderGeometry(.72,.66,.9,20),skinN,0,1.65,0);                           // 맨 윗몸
+  const belly=add(nb,new THREE.SphereGeometry(.6,16,12),skinN,0,1.4,.3);belly.scale.set(1.1,.85,.85);   // 곰 같은 배
+  add(nb,new THREE.SphereGeometry(.5,24,18),skinN,0,2.55,0);                                  // 머리
+  add(nb,new THREE.SphereGeometry(.08,10,8),noseN,0,2.5,.5);                                  // 코
+  for(let i=0;i<40;i++){                                                                      // 곱슬머리: 작은 덩어리를 머리 위·뒤에 빽빽하게
+    const th=Math.acos(1-1.15*(i+.5)/40),ph=i*2.39996,x=Math.sin(th)*Math.cos(ph),y=Math.cos(th),z=Math.sin(th)*Math.sin(ph);
+    if(z>.35&&y<.62)continue;
+    add(nb,new THREE.SphereGeometry(.16,8,6),hairN,x*.5,2.55+y*.5,z*.5);
+  }
+}
+npc.position.set(NPC_X,-1.35,NPC_Z);S.add(npc);
+
+const GD={cobra:{lens:'#79b8ff',frame:'#14171c'},hyper:{lens:'#ffc04d',frame:'#d62f3a'},haenyeo:{lens:'#cfeeff',frame:'#14171c'}};   // 모델별 기본 색
+let gtype='cobra',gcol={...GD.cobra},gon=true;                   // gon=false면 수경을 벗은 상태
+function applyGog(c,on,type,lens,frame){Object.keys(c.gogs).forEach(k=>{const o=c.gogs[k];o.g.visible=on&&type===k;o.fm.color.set(frame);o.lm.color.set(lens);o.lm.emissive.set(lens)})}
+function paintGoggles(){applyGog(H,gon,gtype,gcol.lens,gcol.frame)}
+function setGoggles(){paintGoggles();$('gt').style.opacity=gon?1:.55}
+paintGoggles();setGoggles();
+
+/* ---------- 선택 UI ---------- */
+const PAL=[['#ff6b81','코랄'],['#3fd6b0','민트'],['#ffd93d','레몬'],['#9b7bff','보라'],['#2b4acb','네이비'],['#ff9f43','오렌지'],['#ffffff','흰색'],['#1c1f26','검정']];
+const LENS=[['#79b8ff','파랑 미러'],['#c9d1d9','실버 미러'],['#ffc04d','골드 미러'],['#ff5a6a','레드 미러'],['#ff8fd0','핑크'],['#5be0a0','그린'],['#cfeeff','클리어'],['#2a3038','스모크']];
+const FRAME=[['#14171c','검정'],['#d62f3a','빨강'],['#2b6bff','파랑'],['#ffffff','흰색'],['#ff9f43','오렌지'],['#c9a23c','황동'],['#8a5cff','보라'],['#ff6fb0','핑크']];
+// 색 동그라미 줄을 만들고, 선택 표시를 바꾸는 함수를 돌려줌
+function swatches(id,pal,init,onPick){
+  const box=$(id),btns=[];
+  pal.forEach(([c,n])=>{
+    const b=document.createElement('button');b.style.background=c;b.title=n;b.setAttribute('aria-label',n);
+    b.onclick=()=>{btns.forEach(x=>x.classList.remove('on'));b.classList.add('on');onPick(c)};
+    box.appendChild(b);btns.push(b);if(c===init)b.classList.add('on');
+  });
+  return v=>btns.forEach((b,i)=>b.classList[pal[i][0]===v?'add':'remove']('on'));
+}
+const AV={suit:'#ff6b81',cap:'#ff6b81',capOn:true};                                // 다른 접속자에게 알려 줄 내 모습
+swatches('sw',PAL,'#ff6b81',c=>{suit.color.set(c);AV.suit=c});                      // 수영복 색
+swatches('capc',PAL,'#ff6b81',c=>{capM.color.set(c);AV.cap=c});                     // 수모 색
+const markLens=swatches('lensc',LENS,gcol.lens,c=>{gcol.lens=c;paintGoggles()});     // 수경 렌즈 색
+const markFrame=swatches('framec',FRAME,gcol.frame,c=>{gcol.frame=c;paintGoggles()}); // 수경 프레임 색
+$('cap').onchange=e=>{cap.visible=e.target.checked;AV.capOn=e.target.checked};
+const GN=[['cobra','아레나 코브라'],['hyper','스피도 하이퍼 엘리트'],['haenyeo','해녀수경'],['none','수경 벗기']],GB={};
+function markGG(){GN.forEach(([k])=>GB[k].classList[(gon?gtype:'none')===k?'add':'remove']('on'))}
+GN.forEach(([k,n])=>{
+  const b=document.createElement('button');b.textContent=n;
+  b.onclick=()=>{
+    if(k==='none')gon=false;
+    else{gon=true;gtype=k;gcol={...GD[k]};paintGoggles();markLens(gcol.lens);markFrame(gcol.frame)}
+    setGoggles();markGG();
+  };
+  $('gg').appendChild(b);GB[k]=b;
+});
+markGG();
+$('gt').onclick=()=>{gon=!gon;setGoggles();markGG();toast(gon?'수경을 썼어요 🥽':'수경을 벗었어요 😎')};   // 게임 중 수경 쓰기/벗기
+let toastT;
+function toast(s){const e=$('toast');e.textContent=s;e.style.opacity=1;clearTimeout(toastT);toastT=setTimeout(()=>e.style.opacity=0,4500)}
+$('go').onclick=()=>{
+  const n=cleanName($('nick').value);
+  if(!n){$('nick').classList.add('bad');$('nick').focus();return}          // 닉네임은 입장할 때마다 꼭 정해야 함
+  nick=n;try{localStorage.setItem('jpool_nick',n)}catch(e){}
+  mode='play';resetView();$('select').hidden=true;$('hud').hidden=false;setTag(H,nick);updateWho();
+  toast('방향키·WASD 또는 조이스틱으로 이동 · 화면을 드래그하면 시점 회전, 휠/두 손가락으로 확대·축소 · 스페이스(앉기 버튼)로 앉기');
+};
+$('nick').oninput=()=>$('nick').classList.remove('bad');
+$('nick').onkeydown=e=>{if(e.key==='Enter')$('go').onclick()};
+try{$('nick').value=localStorage.getItem('jpool_nick')||''}catch(e){}
+$('back').onclick=()=>{breath=0;laps=0;winded=false;wd=0;H.wd=0;lastEnd=0;mode='select';resetView();sit=null;hero.position.set(0,DECK,SPAWN);$('select').hidden=false;$('hud').hidden=true;updateWho()};
+$('rv').onclick=()=>resetView();
+
+/* ---------- 입력 ---------- */
+const keys={},joy={x:0,y:0};
+addEventListener('keydown',e=>{
+  if(e.target&&e.target.tagName==='INPUT')return;                          // 닉네임 입력 중엔 게임 키 무시
+  keys[e.code]=true;
+  if(e.code==='Space'||e.code==='KeyE'){e.preventDefault();toggleSit()}
+  if(e.code==='KeyG'&&mode==='play')$('gt').click();                     // G키: 수경 쓰기/벗기
+  const i='123456'.indexOf(e.key);if(i>=0&&e.key.length===1&&wasIn)pickStroke(Object.keys(STROKES)[i]);   // 숫자 1~5로 영법 선택
+});
+addEventListener('keyup',e=>keys[e.code]=false);
+const st=$('stick'),kn=st.firstElementChild;let sid=null;
+function mvStick(e){const r=st.getBoundingClientRect();let dx=e.clientX-(r.left+60),dy=e.clientY-(r.top+60);const l=Math.hypot(dx,dy),m=45;if(l>m){dx*=m/l;dy*=m/l}
+  joy.x=dx/m;joy.y=dy/m;kn.style.transform='translate('+dx+'px,'+dy+'px)'}
+st.addEventListener('pointerdown',e=>{sid=e.pointerId;st.setPointerCapture(sid);mvStick(e)});
+st.addEventListener('pointermove',e=>{if(e.pointerId===sid)mvStick(e)});
+const endStick=e=>{if(e.pointerId===sid){sid=null;joy.x=joy.y=0;kn.style.transform=''}};
+st.addEventListener('pointerup',endStick);st.addEventListener('pointercancel',endStick);
+$('sit').addEventListener('pointerdown',e=>{e.preventDefault();toggleSit()});
+function axis(){
+  let x=(keys.ArrowRight||keys.KeyD?1:0)-(keys.ArrowLeft||keys.KeyA?1:0)+joy.x;
+  let z=(keys.ArrowDown||keys.KeyS?1:0)-(keys.ArrowUp||keys.KeyW?1:0)+joy.y;
+  const l=Math.hypot(x,z);return l>1?[x/l,z/l]:[x,z];
+}
+
+/* ---------- 시점 돌리기: 마우스/터치 드래그 = 회전, 휠/두 손가락 = 확대·축소, 더블클릭 = 초기화 ---------- */
+const orb={yaw:0,pitch:.25,dist:6.2};
+const ORB_DEF={play:{pitch:.42,dist:10.5},select:{pitch:.25,dist:6.2}};
+function resetView(){const d=ORB_DEF[mode];orb.yaw=0;orb.pitch=d.pitch;orb.dist=d.dist}
+const cvs=$('c'),ptr=new Map();let pinch=0;
+const pdist=()=>{const a=[...ptr.values()];return Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y)};
+cvs.addEventListener('pointerdown',e=>{cvs.setPointerCapture(e.pointerId);ptr.set(e.pointerId,{x:e.clientX,y:e.clientY});pinch=ptr.size===2?pdist():0});
+cvs.addEventListener('pointermove',e=>{
+  const p=ptr.get(e.pointerId);if(!p)return;
+  const dx=e.clientX-p.x,dy=e.clientY-p.y;p.x=e.clientX;p.y=e.clientY;
+  if(ptr.size===1){orb.yaw-=dx*.006;orb.pitch=clamp(orb.pitch+dy*.005,.05,1.5)}
+  else if(ptr.size===2){const d=pdist();if(pinch)orb.dist=clamp(orb.dist*pinch/d,3,32);pinch=d}
+});
+const upPtr=e=>{ptr.delete(e.pointerId);pinch=0};
+cvs.addEventListener('pointerup',upPtr);cvs.addEventListener('pointercancel',upPtr);
+cvs.addEventListener('wheel',e=>{e.preventDefault();orb.dist=clamp(orb.dist*Math.exp(e.deltaY*.001),3,32)},{passive:false});
+cvs.addEventListener('dblclick',()=>resetView());
+cvs.addEventListener('contextmenu',e=>e.preventDefault());
+
+/* ---------- 게임 상태 ---------- */
+let mode='select',t=0,sit=null,snap=null,facing=0,flip=0,swimPh=0,stroke='walk',wasIn=false,told=false;
+// 호흡: 헤엄친 거리에 비례해 일정하게 참 (편도 25%, 2왕복=100% → 헥헥!). 쉬면 차는 속도의 절반으로 줄어요
+let sitLab='앉기',breath=0,laps=0,winded=false,wd=0,lastEnd=0,uiKey='',lx=0,lz=0;
+// 영법: sp=헤엄 속도, rate=팔 동작 빠르기
+const STROKES={walk:{n:'걷기',sp:1.8,rate:5},free:{n:'자유형',sp:3.2,rate:5.7},back:{n:'배영',sp:2.8,rate:5},breast:{n:'평영',sp:2.2,rate:3.2},fly:{n:'접영',sp:3.0,rate:4.2},dive:{n:'잠영',sp:3.6,rate:5.5}};
+const SB={};
+function pickStroke(k){stroke=k;Object.keys(SB).forEach(x=>SB[x].classList.remove('on'));SB[k].classList.add('on')}
+Object.keys(STROKES).forEach(k=>{const b=document.createElement('button');b.textContent=STROKES[k].n;b.onclick=()=>pickStroke(k);$('strokes').appendChild(b);SB[k]=b});
+SB.walk.classList.add('on');
+const hp=hero.position,look=new THREE.Vector3(0,1.5,SPAWN),camT=new THREE.Vector3(),lookT=new THREE.Vector3();
+cam.position.set(0,2.6,SPAWN+4.5);
+const onStairs=()=>hp.x>-PX&&hp.x<ROPES[1]&&hp.z>PZ-SD*3&&hp.z<PZ;
+const stairY=()=>-.1-.35*Math.min(2,Math.floor((PZ-hp.z)/SD));
+const inPool=()=>Math.abs(hp.x)<PX&&Math.abs(hp.z)<PZ&&!onStairs();
+
+function toggleSit(){
+  if(mode!=='play')return;
+  if(sit){sit=null;return}
+  if(onStairs()){sit='step';snap={x:hp.x,z:hp.z,f:Math.PI};return}
+  if(inPool()){
+    const b=ROPES.reduce((a,c)=>Math.abs(c-hp.x)<Math.abs(a-hp.x)?c:a);
+    if(Math.abs(b-hp.x)<1){sit='rope';snap={x:b,z:hp.z,f:0};return}
+  }else{
+    const cx=clamp(hp.x,-PX,PX),cz=clamp(hp.z,-PZ,PZ),dx=hp.x-cx,dz=hp.z-cz,d=Math.hypot(dx,dz);
+    if(d<1.8){const ox=d?dx/d:0,oz=d?dz/d:1;sit='edge';snap={x:cx+ox*.2,z:cz+oz*.2,f:Math.atan2(-ox,-oz)};return}
+  }
+  toast('레인 줄 가까이(물속), 수영장 가장자리나 계단에서 앉을 수 있어요 🪑');
+}
+
+
+/* ---------- 멀티플레이: 지금 이 페이지를 열어 둔 사람들과 위치·모습을 실시간으로 공유 (room 기능) ---------- */
+const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
+const cleanName=s=>String(s||'').replace(/[\u0000-\u001f\u007f​-‏‪-‮⁠-⁯﻿]/g,'').trim().slice(0,10);
+const HEX=/^#[0-9a-fA-F]{6}$/;
+// 남이 보낸 값은 믿지 않고 범위·형식을 다시 확인해서 사용
+function cleanPeer(p){
+  if(!p||p.on!==1)return null;
+  const num=(v,a,b)=>typeof v==='number'&&isFinite(v)?clamp(v,a,b):0;
+  return {n:cleanName(p.n)||'손님',x:num(p.x,-DX,DX),y:num(p.y,-1.5,1),z:num(p.z,-DZ,DZ),f:num(p.f,-7,7),
+    sit:p.sit==='rope'||p.sit==='edge'||p.sit==='step'?p.sit:0,sw:p.sw?1:0,st:own(STROKES,p.st)?p.st:'free',mv:p.mv?1:0,w:p.w?1:0,br:num(p.br,0,1),
+    sc:HEX.test(p.sc)?p.sc:'#ff6b81',cc:HEX.test(p.cc)?p.cc:'#ff6b81',co:p.co?1:0,gt:own(GD,p.gt)?p.gt:'',gl:HEX.test(p.gl)?p.gl:'#79b8ff',gf:HEX.test(p.gf)?p.gf:'#14171c'};
+}
+let room=null,nick='',netT=0,lastSent='',announced=false;
+const remote=new Map();                      // 다른 접속자: peer 번호 → {c:캐릭터, p:최근 상태, key:모습 키}
+function syncPeers(list){
+  const seen=new Set();
+  list.forEach(pe=>{
+    if(pe.sameTab||pe.kind!=='viewer')return;
+    const p=cleanPeer(pe.presence);if(!p)return;
+    seen.add(pe.peer);
+    let r=remote.get(pe.peer);
+    if(!r){const c=buildChar();c.face=p.f;c.hero.position.set(p.x,p.y,p.z);S.add(c.hero);r={c,p,key:''};remote.set(pe.peer,r)}
+    r.p=p;
+    const key=[p.sc,p.cc,p.co,p.gt,p.gl,p.gf].join();
+    if(key!==r.key){r.key=key;r.c.suit.color.set(p.sc);r.c.capM.color.set(p.cc);r.c.cap.visible=!!p.co;applyGog(r.c,!!p.gt,p.gt,p.gl,p.gf)}
+    setTag(r.c,p.n);
+  });
+  remote.forEach((r,id)=>{if(!seen.has(id)){S.remove(r.c.hero);remote.delete(id)}});
+  updateWho();
+}
+function updateWho(){
+  const box=$('who');
+  if(!room||mode!=='play'){box.hidden=true;return}
+  box.hidden=false;$('wBtn').textContent='👥 접속 중 '+(remote.size+1)+'명';
+  const l=$('wList');l.textContent='';
+  const line=(n,me)=>{const d=document.createElement('div');d.textContent='• '+n+(me?' (나)':'');l.appendChild(d)};
+  line(nick,true);let i=0;remote.forEach(r=>{if(i++<9)line(r.p.n)});
+}
+$('wBtn').onclick=()=>{$('wList').hidden=!$('wList').hidden};
+function netTick(dt,mv){
+  if(!room)return;
+  netT+=dt;if(netT<.1)return;netT=0;                                   // 1초에 10번만 내 상태를 알림
+  if(mode!=='play'){if(announced){announced=false;lastSent='';room.presence({on:0}).catch(()=>{})}return}
+  const o={on:1,n:nick,x:+hp.x.toFixed(2),y:+hp.y.toFixed(2),z:+hp.z.toFixed(2),f:+facing.toFixed(2),sit:sit||'',sw:(!sit&&inPool())?1:0,st:stroke,
+    mv:mv>.05?1:0,w:winded?1:0,br:+breath.toFixed(2),sc:AV.suit,cc:AV.cap,co:AV.capOn?1:0,gt:gon?gtype:'',gl:gcol.lens,gf:gcol.frame};
+  const j=JSON.stringify(o);if(j===lastSent)return;lastSent=j;announced=true;
+  room.presence(o).catch(()=>{});
+}
+// 직접 올린 웹사이트용: 같은 주소의 /ws 로 접속하는 서버(server.js)와 위치를 주고받음. claude.ai 'room'과 똑같은 모양으로 감싸 둠
+function wsRoom(){
+  let ws=null,id=null,cb=null,mine=null;
+  const send=()=>{if(ws&&ws.readyState===1&&mine)ws.send(JSON.stringify(mine))};
+  function connect(){
+    ws=new WebSocket((location.protocol==='https:'?'wss://':'ws://')+location.host+'/ws');
+    ws.onopen=send;
+    ws.onmessage=ev=>{
+      let m;try{m=JSON.parse(ev.data)}catch(e){return}
+      if(m.t==='hello')id=m.id;
+      else if(m.t==='peers'&&cb&&Array.isArray(m.peers))cb({peers:m.peers.map(q=>({peer:String(q.peer),sameTab:q.peer===id,isMe:q.peer===id,kind:'viewer',presence:q.presence}))});
+    };
+    ws.onclose=()=>{if(cb)cb({peers:[]});setTimeout(connect,2000)};   // 끊기면 2초 뒤 자동 재접속
+  }
+  connect();
+  return {onPeers(f){cb=f;return()=>{cb=null}},presence(o){mine=o;send();return Promise.resolve()}};
+}
+(async()=>{                                   // 연결이 안 되면(저장한 파일로 열었거나 공유 안 된 링크) 혼자 수영하는 모드로 그대로 동작
+  try{
+    let r=null;
+    if(window.claude&&window.claude.use)r=await window.claude.use('room');                   // claude.ai 안에서 열었을 때
+    else if(typeof WebSocket!=='undefined'&&/^https?:$/.test(location.protocol))r=wsRoom();   // 직접 올린 사이트에서 열었을 때
+    if(!r)return;
+    room=r;
+    r.onPeers(ch=>syncPeers(ch.peers),()=>{room=null;syncPeers([])});
+    updateWho();
+  }catch(e){}
+})();
+
+function update(dt){
+  t+=dt;const sd=STROKES[stroke];
+  let [ax,az]=mode==='play'?axis():[0,0];
+  if(mode==='play'){const c=Math.cos(orb.yaw),s=Math.sin(orb.yaw);[ax,az]=[c*ax+s*az,-s*ax+c*az]}   // 카메라가 보는 방향 기준으로 이동
+  const mv=Math.hypot(ax,az);
+  if(sit&&mv>.25)sit=null;
+  if(sit){const k=Math.min(1,dt*10);hp.x=L(hp.x,snap.x,k);hp.z=L(hp.z,snap.z,k);facing=turn(facing,snap.f,k)}
+  else if(mv>.05){
+    const sp=inPool()?sd.sp*(winded?.55:1):onStairs()?3.6:4.8*(winded?.8:1);
+    hp.x=clamp(hp.x+ax*sp*dt,-DX+.6,DX-.6);hp.z=clamp(hp.z+az*sp*dt,-DZ+.6,DZ-.6);
+    facing=turn(facing,Math.atan2(ax,az),Math.min(1,dt*12));
+  }else if(mode==='select')facing=Math.sin(t*.8)*.7;
+  if(!sit)COLS.forEach(([cx,cz])=>{            // 기둥에 부딪히면 밀려나기
+    const dx=hp.x-cx,dz=hp.z-cz,h=1.05;
+    if(Math.abs(dx)<h&&Math.abs(dz)<h){if(Math.abs(dx)>Math.abs(dz))hp.x=cx+(Math.sign(dx)||1)*h;else hp.z=cz+(Math.sign(dz)||1)*h}
+  });
+  if(!sit){                                    // NPC 아저씨는 덩치가 커서 부딪히면 밀려나기
+    const dx=hp.x-NPC_X,dz=hp.z-NPC_Z,d=Math.hypot(dx,dz);
+    if(d<NPC_R){hp.x=NPC_X+(d?dx/d:0)*NPC_R;hp.z=NPC_Z+(d?dz/d:1)*NPC_R}
+  }
+  nb.scale.y=1+Math.sin(t*1.7)*.012;nb.rotation.y=Math.sin(t*.5)*.08;   // 숨쉬듯 살짝 움직임
+  const sw=!sit&&inPool();
+  const inW=mode==='play'&&inPool();                                    // 물에 들어가면 영법 선택 버튼 표시
+  if(inW!==wasIn){wasIn=inW;if(inW)lastEnd=hp.z>0?1:-1;$('strokes').hidden=!inW;if(inW){pickStroke('walk');if(!told){told=true;toast('물속에선 처음엔 서 있어요 🧍 헤엄치려면 영법을 골라 보세요 (키보드 숫자 1~6도 돼요)')}}}
+
+  // 호흡 게이지: 실제로 헤엄치는 중에만 편도를 세고, 쉬면 회복 (앉아 있으면 더 빨리)
+  const swimming=sw&&mv>.05&&stroke!=='walk';                          // 걷기·서 있기는 호흡이 차지 않고, 오히려 쉬는 것으로 침
+  const wading=sw&&mv>.05&&stroke==='walk';
+  const dd=Math.min(1,Math.hypot(hp.x-lx,hp.z-lz));lx=hp.x;lz=hp.z;
+  const fillPerM=.25/(PZ*2);                                           // 편도(수영장 길이) 한 번에 정확히 25%: 헤엄친 거리에 비례해 일정하게(리니어) 참
+  if(inW&&swimming){
+    breath=Math.min(1,breath+dd*fillPerM);
+    const e=hp.z>PZ-1.5?1:hp.z<-PZ+1.5?-1:0;
+    if(e&&e!==lastEnd){lastEnd=e;laps++}                              // 편도 횟수는 표시용으로만 셈
+  }
+  if(!swimming)breath=Math.max(0,breath-dt*3.2*fillPerM*.5);          // 줄어드는 속도 = 차는 속도의 절반 (2배 느리게)
+  if(!winded&&breath>=1){winded=true;if(mode==='play')toast('헥헥… 숨이 차요! 잠시 쉬면 회복돼요 😮‍💨')}
+  else if(winded&&breath<=.5)winded=false;
+  if(mode==='play'){                                                    // 우상단 상태바 갱신
+    const nm=swimming||wading?sd.n:'쉬는중',pc=Math.round(breath*100),key=nm+'|'+pc+'|'+laps+'|'+winded;
+    if(key!==uiKey){
+      uiKey=key;$('stName').textContent=nm;$('gFill').style.width=pc+'%';
+      $('gFill').style.background=breath>=1?'#e5384b':breath>=.75?'#ff9f43':breath>=.5?'#ffd93d':'#3fd66b';
+      $('gTxt').textContent=winded?'헥헥… 숨이 차요!':'호흡 '+pc+'% · 편도 '+laps+'회';
+      $('status').classList.toggle('hard',winded);
+    }
+  }
+
+  const ty=sit==='rope'?-.3:sit==='edge'?-.05:sit==='step'?stairY()-.45:sw?(stroke==='dive'?-1:stroke==='walk'?-1.3:-.5):onStairs()?stairY():DECK;
+  hp.y=L(hp.y,ty,Math.min(1,dt*8));
+
+  animChar(H,{sit:sit||0,sw,stroke,mv,winded,breath,facing},dt);          // 내 캐릭터 자세
+  H.tag&&(H.tag.visible=mode==='play');
+  remote.forEach(r=>{                                                   // 다른 접속자: 받은 위치로 부드럽게 따라가며 같은 자세 함수로 움직임
+    const p=r.p,c=r.c,h=c.hero,k=Math.min(1,dt*9);
+    h.position.x=L(h.position.x,p.x,k);h.position.y=L(h.position.y,p.y,k);h.position.z=L(h.position.z,p.z,k);c.face=turn(c.face,p.f,k);
+    animChar(c,{sit:p.sit,sw:!!p.sw,stroke:p.st,mv:p.mv,winded:!!p.w,breath:p.br,facing:c.face},dt);
+  });
+  const sl=sit?'일어서기':'앉기';if(sl!==sitLab){sitLab=sl;$('sit').textContent=sl;$('sit').style.fontSize=sit?'15px':'18px'}   // 앉아 있으면 버튼이 일어서기로 바뀜
+  netTick(dt,mv);
+
+  for(let i=0;i<wp.count;i++)wp.setZ(i,Math.sin(wp.getX(i)*1.3+t*2)*.03+Math.cos(wp.getY(i)*1.1+t*1.6)*.03);
+  wp.needsUpdate=true;
+
+  // 카메라: 캐릭터를 중심으로 돌아보는 궤도 카메라
+  const fx=-Math.sin(orb.yaw),fz=-Math.cos(orb.yaw),ahead=mode==='play'?1.5:0;
+  lookT.set(hp.x+fx*ahead,hp.y+(mode==='play'?.9:.3),hp.z+fz*ahead);
+  const cp=Math.cos(orb.pitch),spch=Math.sin(orb.pitch);
+  camT.set(lookT.x-fx*cp*orb.dist,lookT.y+spch*orb.dist,lookT.z-fz*cp*orb.dist);
+  camT.x=clamp(camT.x,-DX+.6,DX-.6);camT.z=Math.max(camT.z,-DZ+.6);camT.y=Math.max(camT.y,.5);   // 벽 뒤·물속으로 못 나가게
+  const kc=Math.min(1,dt*8);
+  cam.position.lerp(camT,kc);look.lerp(lookT,kc);cam.lookAt(look);
+}
+let last=performance.now();
+function loop(n){const dt=Math.min(.05,(n-last)/1000);last=n;update(dt);R.render(S,cam);requestAnimationFrame(loop)}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

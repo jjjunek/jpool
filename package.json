@@ -1,0 +1,8 @@
+{
+  "name": "jpool",
+  "version": "1.0.0",
+  "private": true,
+  "description": "더제이풀 - 여러 명이 함께 수영하는 3D 수영장",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" }
+}
