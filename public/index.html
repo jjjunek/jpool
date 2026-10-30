@@ -22,39 +22,60 @@ p{margin:0 0 10px;font-size:14px;opacity:.8}
 label{display:block;margin-bottom:12px;font-size:15px}
 button{font:inherit;color:inherit}
 #go{width:100%;border:0;border-radius:16px;padding:13px;font-size:18px;font-weight:700;background:var(--acc);color:#fff;cursor:pointer}
-#hud button.top{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));border:0;border-radius:14px;padding:9px 14px;background:var(--card);cursor:pointer;font-weight:600}
-#back{left:12px}
-#rv{left:114px}
-#gt{left:162px}
-#toast{position:fixed;left:50%;bottom:calc(150px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--card);border-radius:14px;padding:8px 14px;font-size:13px;max-width:80vw;text-align:center;opacity:0;transition:opacity .4s;pointer-events:none}
+#toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + var(--dockH,96px) + 160px);z-index:6;transform:translateX(-50%);background:var(--card);border-radius:14px;padding:8px 14px;font-size:13px;max-width:80vw;text-align:center;opacity:0;transition:opacity .4s;pointer-events:none}
 #gg{display:flex;gap:6px;flex-wrap:wrap}
 #gg button{border:2px solid transparent;border-radius:999px;padding:7px 12px;background:var(--chip);cursor:pointer;font-weight:600;font-size:14px}
 #gg button.on{border-color:var(--acc)}
 #nick{flex:1;min-width:0;border:2px solid var(--chip);border-radius:12px;padding:8px 10px;font:inherit;font-size:14px;background:var(--card);color:var(--fg);user-select:text;-webkit-user-select:text}
 #nick.bad{border-color:#e5384b}
-#who{position:fixed;right:12px;top:calc(92px + env(safe-area-inset-top,0px));width:150px;text-align:left}
-#wBtn{width:100%;border:0;border-radius:12px;padding:6px 10px;background:var(--card);font-weight:700;font-size:13px;cursor:pointer;box-shadow:0 2px 8px rgba(0,60,120,.2)}
-#wList{margin-top:4px;background:var(--card);border-radius:12px;padding:8px 10px;font-size:13px;max-height:180px;overflow-y:auto}
-#wList div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#strokes{position:fixed;left:50%;top:calc(130px + env(safe-area-inset-top,0px));transform:translateX(-50%);display:flex;gap:6px;flex-wrap:wrap;justify-content:center;width:min(94vw,440px)}
-#strokes button{border:0;border-radius:999px;padding:8px 13px;background:var(--card);font-weight:600;font-size:14px;cursor:pointer;box-shadow:0 2px 8px rgba(0,60,120,.2)}
-#strokes button.on{background:var(--acc);color:#fff}
-#status{position:fixed;right:12px;top:calc(12px + env(safe-area-inset-top,0px));width:150px;box-sizing:border-box;background:var(--card);border-radius:14px;padding:8px 10px;text-align:left;box-shadow:0 2px 8px rgba(0,60,120,.2)}
-#stName{font-weight:800;font-size:15px;margin-bottom:6px}
-#gauge{position:relative;height:10px;border-radius:6px;background:rgba(0,0,0,.14);overflow:hidden}
-#gFill{display:block;height:100%;width:0;border-radius:6px;background:#3fd66b}
-#gauge b{position:absolute;top:0;bottom:0;width:2px;background:rgba(255,255,255,.9)}
+#stick{display:none;position:fixed;left:20px;bottom:calc(env(safe-area-inset-bottom,0px) + var(--dockH,96px) + 26px);width:120px;height:120px;border-radius:50%;background:var(--card);touch-action:none}
+#stick i{position:absolute;left:35px;top:35px;width:50px;height:50px;border-radius:50%;background:var(--acc);opacity:.85}
+@media (pointer:coarse){#stick{display:block}}
+
+/* ---------- 게임 화면 UI: 왼쪽 위 정보카드 · 오른쪽 위 상태카드 · 아래 액션바 ---------- */
+.glass{background:rgba(10,36,60,.6);-webkit-backdrop-filter:blur(16px) saturate(140%);backdrop-filter:blur(16px) saturate(140%);
+  border:1px solid rgba(190,228,255,.18);box-shadow:0 10px 30px rgba(0,20,40,.25);color:#f1f8fd}
+.hcard{position:fixed;top:calc(10px + env(safe-area-inset-top,0px));border-radius:22px;padding:13px 15px;box-sizing:border-box;text-align:left;z-index:5}
+#info{left:max(10px,env(safe-area-inset-left,0px));width:calc(54% - 15px);max-width:300px}
+#status{right:max(10px,env(safe-area-inset-right,0px));width:calc(46% - 15px);max-width:250px}
+.eyebrow{margin:0;font-weight:800;font-size:11px;letter-spacing:.24em;color:#ffd36b}
+.ttl{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 8px;margin:5px 0 7px}
+.ttl b{font-size:24px;font-weight:800;line-height:1.15}
+.ttl span{font-size:12px;opacity:.7}
+#wBtn{display:flex;align-items:center;gap:6px;flex-wrap:wrap;border:0;background:none;padding:0;font-size:13.5px;font-weight:600;text-align:left;cursor:pointer;line-height:1.4}
+#wBtn b{font-variant-numeric:tabular-nums}
+.dot{width:9px;height:9px;border-radius:50%;background:#ffd36b;box-shadow:0 0 0 3px rgba(255,211,107,.2);flex:none}
+.dot.wet{background:#63d6ff;box-shadow:0 0 0 3px rgba(99,214,255,.22)}
+#wList{margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.15);font-size:13px;max-height:140px;overflow-y:auto}
+#wList div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.9}
+.rb{display:flex;justify-content:space-between;align-items:center;gap:6px}
+.lbl{font-size:12px;font-weight:600;opacity:.72}
+.tag{font-size:11px;font-weight:700;padding:3px 8px;border-radius:99px;background:rgba(255,255,255,.12);white-space:nowrap}
+.tag.go{background:rgba(99,214,255,.2);color:#63d6ff}
+.tag.warn{background:rgba(229,56,75,.25);color:#ff8a95}
+#stName{font-size:26px;font-weight:800;line-height:1.15;margin:4px 0 9px}
+#gPct{font-size:15px;font-variant-numeric:tabular-nums}
+#gauge{position:relative;height:9px;border-radius:99px;background:rgba(255,255,255,.16);overflow:hidden;margin-top:5px}
+#gFill{display:block;height:100%;width:0;border-radius:99px;background:#3fd66b}
+#gauge b{position:absolute;top:0;bottom:0;width:2px;background:rgba(10,36,60,.55)}
 #gauge b:nth-of-type(1){left:25%}
 #gauge b:nth-of-type(2){left:50%}
 #gauge b:nth-of-type(3){left:75%}
-#gTxt{display:block;margin-top:4px;font-size:11px;opacity:.85}
+#gTxt{display:block;margin-top:6px;font-size:11.5px;opacity:.75}
 #status.hard #gFill{animation:blink .45s infinite alternate}
-#status.hard #gTxt{color:#e5384b;font-weight:700;opacity:1}
+#status.hard #gTxt{color:#ff8a95;font-weight:700;opacity:1}
 @keyframes blink{from{opacity:1}to{opacity:.45}}
-#sit{position:fixed;right:20px;bottom:calc(28px + env(safe-area-inset-bottom,0px));width:84px;height:84px;border-radius:50%;border:0;background:var(--acc);color:#fff;font-size:18px;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.3);cursor:pointer}
-#stick{display:none;position:fixed;left:20px;bottom:calc(24px + env(safe-area-inset-bottom,0px));width:120px;height:120px;border-radius:50%;background:var(--card);touch-action:none}
-#stick i{position:absolute;left:35px;top:35px;width:50px;height:50px;border-radius:50%;background:var(--acc);opacity:.85}
-@media (pointer:coarse){#stick{display:block}}
+#dock{position:fixed;left:max(10px,env(safe-area-inset-left,0px));right:max(10px,env(safe-area-inset-right,0px));
+  bottom:calc(10px + env(safe-area-inset-bottom,0px));max-width:560px;margin:0 auto;border-radius:26px;padding:10px 8px 12px;
+  display:flex;flex-direction:column;align-items:center;gap:8px;z-index:5;box-sizing:border-box}
+.acts{display:flex;justify-content:space-evenly;align-items:center;width:100%;flex-wrap:wrap;row-gap:2px}
+.acts button{border:0;background:none;font-size:clamp(14px,4vw,16px);font-weight:600;padding:10px 8px;border-radius:12px;cursor:pointer;white-space:nowrap;color:#f1f8fd}
+.acts button:active{background:rgba(255,255,255,.12)}
+.acts button:focus-visible,#strokes button:focus-visible,#wBtn:focus-visible{outline:2px solid #63d6ff;outline-offset:2px}
+.sep{width:1px;height:24px;background:rgba(255,255,255,.25)}
+#strokes{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+#strokes button{border:1.5px solid rgba(255,211,107,.45);border-radius:99px;padding:8px 13px;background:rgba(255,211,107,.08);color:#f1f8fd;font-weight:700;font-size:14px;cursor:pointer}
+#strokes button.on{background:rgba(255,211,107,.28);border-color:#ffd36b}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -72,15 +93,31 @@ button{font:inherit;color:inherit}
   <button id="go">입장하기 🌊</button>
 </div>
 <div id="hud" hidden>
-  <button id="back" class="top">👙 탈의실</button>
-  <button id="rv" class="top" title="시점 초기화" aria-label="시점 초기화">🎥</button>
-  <button id="gt" class="top" title="수경 벗기/쓰기" aria-label="수경 벗기/쓰기">🥽</button>
-  <div id="status"><div id="stName">쉬는중</div><div id="gauge"><i id="gFill"></i><b></b><b></b><b></b></div><small id="gTxt">호흡 0%</small></div>
-  <div id="who" hidden><button id="wBtn">👥 접속 중 1명</button><div id="wList" hidden></div></div>
-  <div id="strokes" hidden></div>
+  <section id="info" class="hcard glass" aria-label="수영장 정보">
+    <p class="eyebrow">THE J POOL</p>
+    <div class="ttl"><b>더제이풀</b><span>실내 수영장</span></div>
+    <button id="wBtn" aria-label="접속자 목록 보기"><i class="dot" id="dot"></i><span id="where">풀사이드</span><span>·</span><span>접속자 <b id="online">1</b>명</span></button>
+    <div id="wList" hidden></div>
+  </section>
+  <section id="status" class="hcard glass" aria-label="현재 영법과 호흡">
+    <div class="rb"><span class="lbl">현재 영법</span><span id="stTag" class="tag">쉬는 중</span></div>
+    <div id="stName">물 밖</div>
+    <div class="rb"><span class="lbl">호흡</span><b id="gPct">0%</b></div>
+    <div id="gauge"><i id="gFill"></i><b></b><b></b><b></b></div>
+    <small id="gTxt">편도 0회</small>
+  </section>
   <div id="toast"></div>
   <div id="stick"><i></i></div>
-  <button id="sit">앉기</button>
+  <nav id="dock" class="glass" aria-label="동작">
+    <div class="acts">
+      <button id="sit">앉기</button>
+      <button id="gt">수경 벗기</button>
+      <button id="rv">시점 초기화</button>
+      <span class="sep" aria-hidden="true"></span>
+      <button id="back">탈의실</button>
+    </div>
+    <div id="strokes" hidden></div>
+  </nav>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
@@ -430,7 +467,7 @@ const GD={cobra:{lens:'#79b8ff',frame:'#14171c'},hyper:{lens:'#ffc04d',frame:'#d
 let gtype='cobra',gcol={...GD.cobra},gon=true;                   // gon=false면 수경을 벗은 상태
 function applyGog(c,on,type,lens,frame){Object.keys(c.gogs).forEach(k=>{const o=c.gogs[k];o.g.visible=on&&type===k;o.fm.color.set(frame);o.lm.color.set(lens);o.lm.emissive.set(lens)})}
 function paintGoggles(){applyGog(H,gon,gtype,gcol.lens,gcol.frame)}
-function setGoggles(){paintGoggles();$('gt').style.opacity=gon?1:.55}
+function setGoggles(){paintGoggles();$('gt').textContent=gon?'수경 벗기':'수경 쓰기'}
 paintGoggles();setGoggles();
 
 /* ---------- 선택 UI ---------- */
@@ -585,13 +622,11 @@ function syncPeers(list){
   remote.forEach((r,id)=>{if(!seen.has(id)){S.remove(r.c.hero);remote.delete(id)}});
   updateWho();
 }
-function updateWho(){
-  const box=$('who');
-  if(!room||mode!=='play'){box.hidden=true;return}
-  box.hidden=false;$('wBtn').textContent='👥 접속 중 '+(remote.size+1)+'명';
+function updateWho(){                          // 왼쪽 위 정보카드: 접속자 수 + (누르면) 접속자 목록
+  $('online').textContent=remote.size+1;
   const l=$('wList');l.textContent='';
   const line=(n,me)=>{const d=document.createElement('div');d.textContent='• '+n+(me?' (나)':'');l.appendChild(d)};
-  line(nick,true);let i=0;remote.forEach(r=>{if(i++<9)line(r.p.n)});
+  line(nick||'나',true);let i=0;remote.forEach(r=>{if(i++<9)line(r.p.n)});
 }
 $('wBtn').onclick=()=>{$('wList').hidden=!$('wList').hidden};
 function netTick(dt,mv){
@@ -670,16 +705,21 @@ function update(dt){
   if(!swimming)breath=Math.max(0,breath-dt*3.2*fillPerM*.5);          // 줄어드는 속도 = 차는 속도의 절반 (2배 느리게)
   if(!winded&&breath>=1){winded=true;if(mode==='play')toast('헥헥… 숨이 차요! 잠시 쉬면 회복돼요 😮‍💨')}
   else if(winded&&breath<=.5)winded=false;
-  if(mode==='play'){                                                    // 우상단 상태바 갱신
-    const nm=swimming||wading?sd.n:'쉬는중',pc=Math.round(breath*100),key=nm+'|'+pc+'|'+laps+'|'+winded;
+  if(mode==='play'){                                                    // 왼쪽 위 정보카드 + 오른쪽 위 상태카드 갱신
+    const lane=Math.min(5,Math.max(1,Math.floor((hp.x+PX)/LW)+1)),stair=onStairs(),wet=inPool()||stair;
+    const where=stair?lane+'번 레인 계단':inPool()?lane+'번 레인':sit==='edge'?'수영장 가장자리':'풀사이드';
+    const nm=inW?sd.n:'물 밖';
+    const tg=winded?'헥헥':swimming?'수영 중':wading?'걷는 중':sit?'앉아서 쉬는 중':'쉬는 중';
+    const pc=Math.round(breath*100),key=[nm,tg,pc,laps,winded,where].join('|');
     if(key!==uiKey){
-      uiKey=key;$('stName').textContent=nm;$('gFill').style.width=pc+'%';
+      uiKey=key;$('stName').textContent=nm;$('gFill').style.width=pc+'%';$('gPct').textContent=pc+'%';
+      $('stTag').textContent=tg;$('stTag').className='tag'+(winded?' warn':swimming?' go':'');
       $('gFill').style.background=breath>=1?'#e5384b':breath>=.75?'#ff9f43':breath>=.5?'#ffd93d':'#3fd66b';
-      $('gTxt').textContent=winded?'헥헥… 숨이 차요!':'호흡 '+pc+'% · 편도 '+laps+'회';
+      $('gTxt').textContent=winded?'헥헥… 숨이 차요! 잠시 쉬어요':'편도 '+laps+'회';
       $('status').classList.toggle('hard',winded);
+      $('where').textContent=where;$('dot').classList.toggle('wet',wet);
     }
   }
-
   const ty=sit==='rope'?-.3:sit==='edge'?-.05:sit==='step'?stairY()-.45:sw?(stroke==='dive'?-1:stroke==='walk'?-1.3:-.5):onStairs()?stairY():DECK;
   hp.y=L(hp.y,ty,Math.min(1,dt*8));
 
@@ -690,7 +730,7 @@ function update(dt){
     h.position.x=L(h.position.x,p.x,k);h.position.y=L(h.position.y,p.y,k);h.position.z=L(h.position.z,p.z,k);c.face=turn(c.face,p.f,k);
     animChar(c,{sit:p.sit,sw:!!p.sw,stroke:p.st,mv:p.mv,winded:!!p.w,breath:p.br,facing:c.face},dt);
   });
-  const sl=sit?'일어서기':'앉기';if(sl!==sitLab){sitLab=sl;$('sit').textContent=sl;$('sit').style.fontSize=sit?'15px':'18px'}   // 앉아 있으면 버튼이 일어서기로 바뀜
+  const sl=sit?'일어서기':'앉기';if(sl!==sitLab){sitLab=sl;$('sit').textContent=sl}   // 앉아 있으면 버튼이 일어서기로 바뀜
   netTick(dt,mv);
 
   for(let i=0;i<wp.count;i++)wp.setZ(i,Math.sin(wp.getX(i)*1.3+t*2)*.03+Math.cos(wp.getY(i)*1.1+t*1.6)*.03);
@@ -705,6 +745,9 @@ function update(dt){
   const kc=Math.min(1,dt*8);
   cam.position.lerp(camT,kc);look.lerp(lookT,kc);cam.lookAt(look);
 }
+const dockEl=$('dock');                                                // 아래 액션바 높이에 맞춰 조이스틱·안내문 위치 조정
+const setDockH=()=>document.documentElement.style.setProperty('--dockH',(dockEl.offsetHeight||96)+'px');
+if(window.ResizeObserver)new ResizeObserver(setDockH).observe(dockEl);addEventListener('resize',setDockH);
 let last=performance.now();
 function loop(n){const dt=Math.min(.05,(n-last)/1000);last=n;update(dt);R.render(S,cam);requestAnimationFrame(loop)}
 requestAnimationFrame(loop);
